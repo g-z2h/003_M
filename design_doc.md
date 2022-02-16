@@ -1,4 +1,4 @@
-# [Catch Your Fitness]
+# Catch Your Fitness
 
 ## プロジェクトの目的
 
@@ -22,19 +22,6 @@
 - 毎朝 9 時頃に LINE から最新のトレーニング動画 10 件程まとめて送る
 - 気に入った動画のみ Notion のデータベースに保存
 
-## 各クラスの概要
-
-### Model
-
-#### User
-
-- 利用者の line_id の保存
-- 利用をやめた際は削除する
-
-### Controller
-
-#### Line bot controller?
-
 ## 使用技術
 
 - Node.js
@@ -47,33 +34,27 @@
 
 - Node.js
 - AWS(Lambda)
-  サーバーの運用管理のコスト削減。従量課金制（0.2USD/100 万リクエスト）
+  \_サーバーの運用管理のコスト削減。従量課金制（0.2USD/100 万リクエスト）
 - Line Messaging API
-  外部サービスと接続・連携したアカウントの作成・開発が可能
+  \_外部サービスと接続・連携したアカウントの作成・開発が可能
 - YouTube Data API
-  動画の情報を取得できる
+  \_動画の情報を取得できる
 - Notion API
-  ソートしたり検索したりするのが直感的で簡単に操作できる
+  \_ソートしたり検索したりするのが直感的で簡単に操作できる
 
 ## 実装
 
-### 処理フロー
+### 構成＆処理フロー
 
-maeda-PF-Copy of PF.jpeg
+![flow](https://user-images.githubusercontent.com/73515602/154196450-b04b44be-2ddc-4302-aca6-942a9fde6fa7.jpeg)
 
-フローチャートと ER 図
+![flow_2](https://user-images.githubusercontent.com/73515602/154202373-afa1ba2d-57d9-48e5-92bf-e4936955bc84.jpeg)
 
 - LINEBOT 登録
 - 毎朝同じ時間に、フィットネス系 YouTuber の最新のトレーニング動画を 10 件取得
 - ユーザーに動画情報を返す（サムネイル表示、タイトル表示、動画 URL、投稿日）
 - ユーザーは Yes/No を判断
 - Yes なら Notion のデータベースに保存
-
-[「どのように処理をおこなうか」を各関数内の処理フローを上記で説明したインターフェイスに基づき、自然言語で詳細に書く]
-
-### 作成物の使用例
-
-[おもにサンプルコード]
 
 ## セキュリティやプライバシーについての考察
 
@@ -91,7 +72,7 @@ maeda-PF-Copy of PF.jpeg
 
 ## 参考文献
 
-[参考文献を書く]
+https://nasal-howler-18d.notion.site/PF_References-b83878bf0011478d89acca2a91248a3f
 
 ## 実装計画
 
@@ -100,7 +81,6 @@ maeda-PF-Copy of PF.jpeg
 ### 処理土台作成
 
 - 各 API 権限設定など 1h
-- 友達登録の際に DB に line_id を保存、解除の際に削除 30m
 
 ### 使えるように実装
 
@@ -108,12 +88,12 @@ maeda-PF-Copy of PF.jpeg
 
 ## スケジュール
 
-1day 基礎作成
-2day 処理土台作成
-3day 使えるように実装
-4day 調整日
-5day README 作成
-6day デバッグとサービス公開
+- 1day 基礎作成
+- 2day 処理土台作成
+- 3day 使えるように実装
+- 4day 調整日
+- 5day README 作成
+- 6day デバッグとサービス公開
 
 ## Doc の編集の履歴
 
