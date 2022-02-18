@@ -1,9 +1,8 @@
 //スクリプトプロパティを取得
 const scriptProperties = PropertiesService.getScriptProperties();
 scriptProperties.setProperties({
-  CHTOKNE:
-    'Fzq/D3lh2PPaauIWpNw206PC71eNysw6CoDypcS7lGUQhaHH/ybl3P5n3cSLIYF5WJqQFvdPnwgbsr5SPcMc9HEnjQdRCJ8puN5giVwtGU4y40/7phAIZogIZUqerqnngHfJORNyEA3j6J5rqoe26QdB04t89/1O/w1cDnyilFU=',
-  LINEID: 'U15b24b97bdd98739f512c72a30e8ad65',
+  CHTOKNE: '**********',
+  LINEID: '**********',
 });
 
 const token = scriptProperties.getProperty('CHTOKNE'); //LINEチャンネルトークン
