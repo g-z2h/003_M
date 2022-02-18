@@ -24,6 +24,5 @@ function postToLine() {
     },
     payload: JSON.stringify(payload),
   };
-
   UrlFetchApp.fetch(url, params);
 }
