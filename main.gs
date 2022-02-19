@@ -22,9 +22,13 @@ const integrationToken = scriptProperties.getProperty('ITOKEN'); //Notion Integr
 const databaseID = scriptProperties.getProperty('DATABASEID'); //DATABASE ID
 const urlNotion = scriptProperties.getProperty('URL'); //url notion
 
+
 //ユーザーにLINEのメッセージ送信(毎朝提定時に実行する処理)
 function postToLine() {
-  const youtubeData = getData(); //youtubeから取得したデータ
+
+  //youtubeから取得したデータ
+  const youtubeData = getData()
+  const postbackData = [youtubeData.snippet.thumbnails.high.url,"https://www.youtube.com/watch?v="+ youtubeData.id.videoId, youtubeData.snippet.title,youtubeData.snippet.channelTitle,Utilities.formatDate(new Date(youtubeData.snippet.publishedAt), "JST", "yyyy-MM-dd HH:mm:ss")]
 
   // const url = 'https://api.notion.com/v1/databases/' + databaseID + '/query';
 
@@ -32,166 +36,262 @@ function postToLine() {
   const payload = {
     to: lineID,
     messages: [
-      {
-        type: 'flex',
-        altText: '最新の動画が届きました！',
-        contents: {
-          type: 'bubble',
-          hero: {
-            type: 'image',
-            url: youtubeData.snippet.thumbnails.high.url,
-            size: 'full',
-            aspectRatio: '20:13',
-            aspectMode: 'cover',
-            action: {
-              type: 'uri',
-              uri: 'https://www.youtube.com/watch?v=' + youtubeData.id.videoId,
-            },
-          },
-          body: {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'text',
-                text: youtubeData.snippet.title,
-                weight: 'bold',
-                size: 'md',
-              },
-              {
-                type: 'box',
-                layout: 'baseline',
-                margin: 'md',
-                contents: [
-                  {
-                    type: 'text',
-                    text: youtubeData.snippet.channelTitle,
-                    size: 'sm',
-                    color: '#999999',
-                    margin: 'md',
-                    flex: 0,
-                  },
-                ],
-              },
-              {
-                type: 'box',
-                layout: 'vertical',
-                margin: 'lg',
-                spacing: 'sm',
-                contents: [
-                  {
-                    type: 'box',
-                    layout: 'baseline',
-                    spacing: 'sm',
-                    contents: [
-                      {
-                        type: 'text',
-                        text: '投稿日',
-                        color: '#aaaaaa',
-                        size: 'sm',
-                        flex: 1,
-                      },
-                      {
-                        type: 'text',
-                        text: Utilities.formatDate(
-                          new Date(youtubeData.snippet.publishedAt),
-                          'JST',
-                          'yyyy-MM-dd HH:mm:ss'
-                        ),
-                        wrap: true,
-                        color: '#666666',
-                        size: 'sm',
-                        flex: 5,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          footer: {
-            type: 'box',
-            layout: 'horizontal',
-            spacing: 'sm',
-            contents: [
-              {
-                type: 'button',
-                style: 'primary',
-                height: 'sm',
-                action: {
-                  type: 'postback',
-                  label: '保存',
-                  data: 'hello',
-                  displayText: '保存',
-                },
-              },
-              {
-                type: 'button',
-                style: 'link',
-                height: 'sm',
-                action: {
-                  type: 'postback',
-                  label: '無視',
-                  data: 'hello',
-                  displayText: '無視',
-                },
-              },
-              {
-                type: 'spacer',
-              },
-            ],
-            flex: 0,
-            action: {
-              type: 'message',
-              label: 'action',
-              text: 'hello',
-            },
-          },
+     {"type": "flex",
+    "altText": "最新の動画が届きました！",
+      "contents":{
+        "type": "bubble",
+        "hero": {
+          "type": "image",
+          "url": youtubeData.snippet.thumbnails.high.url,
+          "size": "full",
+          "aspectRatio": "20:13",
+          "aspectMode": "cover",
+          "action": {
+            "type": "uri",
+            "uri": "https://www.youtube.com/watch?v="+ youtubeData.id.videoId
+          }
         },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": youtubeData.snippet.title,
+              "weight": "bold",
+              "size": "md"
+            },
+            {
+              "type": "box",
+              "layout": "baseline",
+              "margin": "md",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": youtubeData.snippet.channelTitle,
+                  "size": "sm",
+                  "color": "#999999",
+                  "margin": "md",
+                  "flex": 0
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "lg",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "spacing": "sm",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "投稿日",
+                      "color": "#aaaaaa",
+                      "size": "sm",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": Utilities.formatDate(new Date(youtubeData.snippet.publishedAt), "JST", "yyyy-MM-dd HH:mm:ss"),
+                      "wrap": true,
+                      "color": "#666666",
+                      "size": "sm",
+                      "flex": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "footer": {
+          "type": "box",
+          "layout": "horizontal",
+          "spacing": "sm",
+          "contents": [
+            {
+              "type": "button",
+              "style": "primary",
+              "height": "sm",
+              "action": {
+                "type": "postback",
+                "label": "保存",
+                "data": postbackData[2],
+                "displayText": "保存"
+              }
+            },
+            {
+              "type": "button",
+              "style": "link",
+              "height": "sm",
+              "action": {
+                "type": "postback",
+                "label": "無視",
+                "data": "無視",
+                "displayText": "無視"
+              }
+            },
+            {
+              "type": "spacer"
+            }
+          ],
+          "flex": 0,
+          "action": {
+            "type": "message",
+            "label": "action",
+            "text": "hello"
+          }
+        }
+      }
 
-        /////////////////////////////////////////////////////////////////////
-      },
-    ],
+      /////////////////////////////////////////////////////////////////////
+     }
+    ]
   };
 
   const params = {
     method: 'post',
     contentType: 'application/json',
     headers: {
-      Authorization: 'Bearer ' + token,
+      Authorization: 'Bearer ' + token
     },
-    payload: JSON.stringify(payload),
+    payload: JSON.stringify(payload)
   };
 
   UrlFetchApp.fetch(postuUrl, params);
 }
 
-//返信（postback.dataの中身を取得）
-function doPost(e) {
+function doPost(e){
   // レスポンス取得
-  const responseLine = e.postData.getDataAsString();
-  // JSON形式に変換する
-  var saved = JSON.parse(responseLine).events[0].postback.data;
-  var replyToken = JSON.parse(responseLine).events[0]['replyToken'];
+  // const responseLine = e.postData.getDataAsString();
+  var events = JSON.parse(e.postData.contents).events;
+
+    events.forEach(function(event) {
+    if(event.type == "follow") {
+      follow(event);
+    }else if(event.type == "message"){
+      reply(event);
+    }
+ });
+
+ // JSON形式に変換する
+  // var saved = JSON.parse(responseLine).events[0].postback.data;
+  // var replyToken = JSON.parse(responseLine).events[0].replyToken;
+
+  // var userId = JSON.parse(responseLine).events[0].source.userId;
+
+  var saved = events[0].postback.data;
+  var replyToken = events[0].replyToken;
+
+  var userId = events[0].source.userId;
+  var nickname = getUserProfile(userId);
+
+
+  //Notionに保存
+  notion(saved)
 
   UrlFetchApp.fetch(replyUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token,
-    },
-    method: 'POST',
-    payload: JSON.stringify({
-      replyToken: replyToken,
-      messages: [
-        {
-          type: 'text',
-          text: saved, // レスポンスを送る
+        'headers': {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
         },
-      ],
-      // "notificationDisabled": false // trueだとユーザーに通知されない
-    }),
-  });
+        'method': 'POST',
+        'payload': JSON.stringify({
+      'replyToken': replyToken,
+            "messages": [{
+                "type": "text",
+                "text":  nickname + 'のIDは' + userId
+            }],
+        }),
+    });
 }
+function getUserProfile(userId){
+  var url = 'https://api.line.me/v2/bot/profile/' + userId;
+  var userProfile = UrlFetchApp.fetch(url,{
+    'headers': {
+      'Authorization' :  'Bearer ' + token,
+    },
+  })
+  return JSON.parse(userProfile).displayName;
+}
+
+function follow(event) {
+  let message = {
+    "replyToken" : event.replyToken,
+    "messages" : [{
+        "type": "text",
+        "text" : "フォローありがとうございます!"
+      }]};
+  let options = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer " + token
+    },
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(replyUrl,options)
+}
+
+function reply(event) {
+  let message = {
+    "replyToken" : event.replyToken,
+    "messages" : [{
+        "type": "text",
+        "text" : "次の最新動画は明日の予定です！今日もジムに行ってしっかり鍛えて来て下さい！！"
+      }]};
+  let options = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer " + token
+    },
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(replyUrl,options)
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Notionにデータを保存
+function notion(test) {
+  const  headers = {
+    'Content-Type' : 'application/json; charset=UTF-8',
+    'Authorization': 'Bearer ' + integrationToken,
+    'Notion-Version': '2021-08-16',
+  };
+
+  const  post_data = {
+    'parent': {'database_id': databaseID},
+    'properties': {
+      'Name': {
+        'title': [
+          {
+            'text': {
+              'content': test,
+            }
+          }
+        ]
+      }
+    }
+  };
+
+  const  options = {
+    "method" : "post",
+    "headers" : headers,
+    "payload" : JSON.stringify(post_data)
+  };
+
+ return UrlFetchApp.fetch(urlNotion, options);
+
+}
+
+
 
 /////////////////////////////////////////////////////
 // var line_endpoint = 'https://api.line.me/v2/bot/message/reply';
@@ -233,46 +333,16 @@ function doPost(e) {
 //   return ContentService.createTextOutput(JSON.stringify({'content': 'post ok'})).setMimeType(ContentService.MimeType.JSON);
 // }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Notionにデータを保存（LINEから返ってきたデータを処理）
-// function notion(text) {
-//   const  headers = {
-//     'Content-Type' : 'application/json; charset=UTF-8',
-//     'Authorization': 'Bearer ' + integrationToken,
-//     'Notion-Version': '2021-05-13',
-//   };
 
-//   const  post_data = {
-//     'parent': databaseID,
-//     'properties': {
-//       'Name': {
-//         'title': [
-//           {
-//             'text': {
-//               'content': text,
-//             }
-//           }
-//         ]
-//       }
-//     }
-//   };
 
-//   const  options = {
-//     "method" : "post",
-//     "headers" : headers,
-//     "payload" : JSON.stringify(post_data)
-//   };
 
-//   return UrlFetchApp.fetch(urlNotion, options);
-// }
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//Notionにデータ送信
-// function postToNotion() {
-//   const  result = notion('text');
-//   console.log(result)
-// }
+
 
 // Notionのデータを取得
 // function getNotionData() {
