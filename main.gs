@@ -23,14 +23,56 @@ const databaseID = scriptProperties.getProperty('DATABASEID'); //DATABASE ID
 const urlNotion = scriptProperties.getProperty('URL'); //url notion
 
 
-//ユーザーにLINEのメッセージ送信(毎朝提定時に実行する処理)
+//YouTube Info
+const youtubeApikey = scriptProperties.getProperty('YT_APIKEY') //youtube api key
+const channelID = "UCb-YblEIoA8fdgfVhgG4tBA"; // sample yokokawa
+const baseUrl = "https://www.googleapis.com/youtube/v3/";
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//今日の日時取得
+let date = new Date();
+let day = date.getDate();
+
+//昨日の日付を取得
+date.setDate(day-1);
+const json = JSON.stringify(date) // ex). "2017-08-23T03:00:00.000Z"
+const yesterday = JSON.parse(json) // ex).  2017-08-23T03:00:00.000Z (RFC 3339 形式の date-time 値)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//youtubeからデータ取ってくる
+ function getDataVideos() {
+  // let url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID + '&q=筋トレ'+'&maxResults=2&order=date&type=video&key=' + youtubeApikey
+  let url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='  + '&q=筋トレ'+'&maxResults=2&order=date&publishedAfter=' + yesterday + '&type=video&key=' + youtubeApikey
+
+  let response = UrlFetchApp.fetch(url);
+  var responseJson = JSON.parse(response.getContentText());
+
+   const youtubeData =  responseJson.items
+   Logger.log(youtubeData)
+   return youtubeData
+}
+
+ //youtube APIで取得したデータを格納 (youtubeData =  responseJson.items)
+  const youtubeData = getDataVideos()
+
+
+  const postbackData = [
+  youtubeData[0].snippet.thumbnails.high.url,
+  "https://www.youtube.com/watch?v="+ youtubeData[0].id.videoId,
+  youtubeData[0].snippet.title,
+  youtubeData[0].snippet.channelTitle,
+  Utilities.formatDate(new Date(youtubeData[0].snippet.publishedAt), "JST", "yyyy-MM-dd"),
+
+  youtubeData[0].snippet.title.match(/筋トレ/) ? '筋トレ（仮）' : ' '
+  ]
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//ユーザーにLINEのメッセージ送信
 function postToLine() {
 
-  //youtubeから取得したデータ
-  const youtubeData = getData()
-  const postbackData = [youtubeData.snippet.thumbnails.high.url,"https://www.youtube.com/watch?v="+ youtubeData.id.videoId, youtubeData.snippet.title,youtubeData.snippet.channelTitle,Utilities.formatDate(new Date(youtubeData.snippet.publishedAt), "JST", "yyyy-MM-dd HH:mm:ss")]
-
-  // const url = 'https://api.notion.com/v1/databases/' + databaseID + '/query';
 
   //payload:送るデータの詳細（ユーザー画面に表示されるもの）
   const payload = {
@@ -42,13 +84,13 @@ function postToLine() {
         "type": "bubble",
         "hero": {
           "type": "image",
-          "url": youtubeData.snippet.thumbnails.high.url,
+          "url": youtubeData[0].snippet.thumbnails.high.url,
           "size": "full",
           "aspectRatio": "20:13",
           "aspectMode": "cover",
           "action": {
             "type": "uri",
-            "uri": "https://www.youtube.com/watch?v="+ youtubeData.id.videoId
+            "uri": "https://www.youtube.com/watch?v="+ youtubeData[0].id.videoId
           }
         },
         "body": {
@@ -57,7 +99,7 @@ function postToLine() {
           "contents": [
             {
               "type": "text",
-              "text": youtubeData.snippet.title,
+              "text": youtubeData[0].snippet.title,
               "weight": "bold",
               "size": "md"
             },
@@ -68,7 +110,7 @@ function postToLine() {
               "contents": [
                 {
                   "type": "text",
-                  "text": youtubeData.snippet.channelTitle,
+                  "text": youtubeData[0].snippet.channelTitle,
                   "size": "sm",
                   "color": "#999999",
                   "margin": "md",
@@ -96,7 +138,7 @@ function postToLine() {
                     },
                     {
                       "type": "text",
-                      "text": Utilities.formatDate(new Date(youtubeData.snippet.publishedAt), "JST", "yyyy-MM-dd HH:mm:ss"),
+                      "text": Utilities.formatDate(new Date(youtubeData[0].snippet.publishedAt), "JST", "yyyy-MM-dd HH:mm:ss"),
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
@@ -116,12 +158,13 @@ function postToLine() {
             {
               "type": "button",
               "style": "primary",
+              "color": "#64b8fc",
               "height": "sm",
               "action": {
                 "type": "postback",
                 "label": "保存",
-                "data": postbackData[2],
-                "displayText": "保存"
+                "data": '保存しました',
+                "displayText": " "
               }
             },
             {
@@ -131,8 +174,8 @@ function postToLine() {
               "action": {
                 "type": "postback",
                 "label": "無視",
-                "data": "無視",
-                "displayText": "無視"
+                "data": "無視しました",
+                "displayText": " "
               }
             },
             {
@@ -147,8 +190,6 @@ function postToLine() {
           }
         }
       }
-
-      /////////////////////////////////////////////////////////////////////
      }
     ]
   };
@@ -165,10 +206,12 @@ function postToLine() {
   UrlFetchApp.fetch(postuUrl, params);
 }
 
+//返信処理
 function doPost(e){
   // レスポンス取得
   // const responseLine = e.postData.getDataAsString();
-  var events = JSON.parse(e.postData.contents).events;
+  let events = JSON.parse(e.postData.contents).events;
+
 
     events.forEach(function(event) {
     if(event.type == "follow") {
@@ -178,21 +221,35 @@ function doPost(e){
     }
  });
 
- // JSON形式に変換する
-  // var saved = JSON.parse(responseLine).events[0].postback.data;
-  // var replyToken = JSON.parse(responseLine).events[0].replyToken;
+  let saved = events[0].postback.data; //postToLineのdata ここに配列を入れたい
+  let replyToken = events[0].replyToken;
 
-  // var userId = JSON.parse(responseLine).events[0].source.userId;
+  if(saved == '無視しました')  {
+   UrlFetchApp.fetch(replyUrl, {
+        'headers': {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+        'method': 'POST',
+        'payload': JSON.stringify({
+      'replyToken': replyToken,
+            "messages": [{
+                "type": "text",
+                "text":  '無視しました！'
+            }],
+        }),
+    })
+    return
+  }else{
 
-  var saved = events[0].postback.data;
-  var replyToken = events[0].replyToken;
 
-  var userId = events[0].source.userId;
-  var nickname = getUserProfile(userId);
+ //Notionに保存
+  notion(postbackData)
 
+  //ユーザーid, name取得
+  let userId = events[0].source.userId;
+  let nickname = getUserProfile(userId);
 
-  //Notionに保存
-  notion(saved)
 
   UrlFetchApp.fetch(replyUrl, {
         'headers': {
@@ -204,14 +261,17 @@ function doPost(e){
       'replyToken': replyToken,
             "messages": [{
                 "type": "text",
-                "text":  nickname + 'のIDは' + userId
+                "text":  '保存しました！'
             }],
         }),
     });
+  }
 }
+
+//ユーザー情報の取得（今は使用していない）
 function getUserProfile(userId){
-  var url = 'https://api.line.me/v2/bot/profile/' + userId;
-  var userProfile = UrlFetchApp.fetch(url,{
+  let url = 'https://api.line.me/v2/bot/profile/' + userId;
+  let userProfile = UrlFetchApp.fetch(url,{
     'headers': {
       'Authorization' :  'Bearer ' + token,
     },
@@ -219,6 +279,7 @@ function getUserProfile(userId){
   return JSON.parse(userProfile).displayName;
 }
 
+//友達追加されたときの処理
 function follow(event) {
   let message = {
     "replyToken" : event.replyToken,
@@ -237,6 +298,7 @@ function follow(event) {
   UrlFetchApp.fetch(replyUrl,options)
 }
 
+//ユーザーからのメッセージ返信処理
 function reply(event) {
   let message = {
     "replyToken" : event.replyToken,
@@ -255,29 +317,63 @@ function reply(event) {
   UrlFetchApp.fetch(replyUrl,options)
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 // Notionにデータを保存
-function notion(test) {
+function notion(array) {
   const  headers = {
     'Content-Type' : 'application/json; charset=UTF-8',
     'Authorization': 'Bearer ' + integrationToken,
-    'Notion-Version': '2021-08-16',
+    'Notion-Version': '2021-05-13',
   };
 
   const  post_data = {
     'parent': {'database_id': databaseID},
     'properties': {
-      'Name': {
-        'title': [
+       '動画タイトル': {
+          'title': [
           {
             'text': {
-              'content': test,
+              'content': postbackData[2],
             }
           }
         ]
+      },
+        'チャンネル名': {
+          "rich_text": [
+          {
+            'text': {
+              'content': postbackData[3],
+            }
+          }
+        ]
+      },
+      "URL":{
+        "url":postbackData[1]
+      },
+       '部位': {
+        "multi_select": [
+      {
+        "name": postbackData[5]
+      },
+      {
+        "name": "胸"
       }
+    ]
+      },
+      "投稿日":{
+        "date":{
+          "start":postbackData[4],
+           "end":null
+      },
+    //   "サムネイル":{
+    //    "files": [
+    //   {
+    //     "type": "external",
+    //     "name": "Space Wallpaper",
+    //     "external": "https://website.domain/images/space.png"
+    //   }
+    // ]
+    // }
+     }
     }
   };
 
@@ -288,88 +384,4 @@ function notion(test) {
   };
 
  return UrlFetchApp.fetch(urlNotion, options);
-
 }
-
-
-
-/////////////////////////////////////////////////////
-// var line_endpoint = 'https://api.line.me/v2/bot/message/reply';
-// //ポストで送られてくるので、送られてきたJSONをパース
-// function doPost(e) {
-//   var json = JSON.parse(e.postData.contents);
-//   // var event = JSON.parse(e.postData.contents).events[0];
-//   // if(event.type === 'postback'){
-//   //         var data = JSON.parse(event.postback.data);
-//   //         Logger.log(data)
-//   //         // data.actionでポストバックの振り分け
-//   //         // data.idを使って処理など
-
-//   //     }
-
-//   //返信するためのトークン取得
-//   var reply_token= json.events[0].replyToken;
-//   if (typeof reply_token === 'undefined') {
-//     return;
-//   }
-
-//   //送られたメッセージ内容を取得
-//   var message = json.events[0].message.text;
-//   // メッセージを返信
-//   UrlFetchApp.fetch(line_endpoint, {
-//     'headers': {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       'Authorization': 'Bearer ' + token,
-//     },
-//     'method': 'post',
-//     'payload': JSON.stringify({
-//       'replyToken': reply_token,
-//       'messages': [{
-//         'type': 'text',
-//         'text': message
-//       }],
-//     }),
-//   });
-//   return ContentService.createTextOutput(JSON.stringify({'content': 'post ok'})).setMimeType(ContentService.MimeType.JSON);
-// }
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// Notionのデータを取得
-// function getNotionData() {
-//   const today = new Date();
-//   const formattedToday = Utilities.formatDate(today, 'JST', 'yyyy-MM-dd');
-//   const query = {
-//     filter: {
-//       property: '日付',
-//       date: {
-//         equals: formattedToday,
-//       },
-//     },
-//   };
-//   const headers = {
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${NOTION_API_KEY}`,
-//     'Notion-Version': '2021-08-16',
-//   };
-//   const options = {
-//     method: 'POST',
-//     headers: headers,
-//     payload: JSON.stringify(query),
-//   };
-
-//   const response = UrlFetchApp.fetch(NOTION_URL, options);
-//   const json = JSON.parse(response.getContentText());
-//   const results = json.results;
-
-//   return results;
-// }
