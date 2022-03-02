@@ -26,7 +26,6 @@
 ## 使用技術
 
 - Javascript
-- Typescript
 - GAS（Google App Script）
 - Line Messaging API
 - YouTube Data API
@@ -36,7 +35,6 @@
 
 - Javascript
   \_\_GAS が Javascript を元に作られている
-- Typescript
 - GAS（Google App Script）
   \_\_サーバーレスで実行可能な環境、Google サービスと連携しやすい（YouTube）
 - Line Messaging API
@@ -67,6 +65,10 @@
 - 自分のデータベースを他の人に見られないようにするために、ユーザー自身が Notion でプライベート設定する必要がある。
 
 ## 既知でオープンな問題
+
+- 開発期間と個人利用が第一目的のため、まずは自分専用のアプリとして開発を進める
+- お気に入りした際にユーザーごとに分けられていない
+- 今後他のユーザーが使えるようにしていく
 
 - Notion API はオープンベータなので仕様変更がある場合要修正
 
@@ -111,4 +113,6 @@ https://nasal-howler-18d.notion.site/PF_References-b83878bf0011478d89acca2a91248
 
 ## Doc の編集の履歴
 
-[編集日、編集者、何をしたのか、の 3 つ組を書く]
+2022/02/17 Design_doc 提出
+
+<!-- [編集日、編集者、何をしたのか、の 3 つ組を書く] -->
