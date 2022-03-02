@@ -47,16 +47,12 @@ const yesterday = JSON.parse(json); //ex).  2017-08-23T03:00:00.000Z (RFC 3339 �
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //youtubeからデータ取ってくる
 function getDataVideos() {
-  // let url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID + '&q=筋トレ'+'&maxResults=2&order=date&type=video&key=' + youtubeApikey
-  // let url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ'+'&maxResults=1&order=date&publishedAfter=' + yesterday + '&type=video&key=' + test2YoutubeApikey
   let url =
     'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
     channelID +
     '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&publishedAfter=' +
-    yesterday +
-    '&type=video&key=' +
-    test10YoutubeApikey;
+    '&maxResults=1&order=date&type=video&key=' +
+    test7YoutubeApikey;
   let url2 =
     'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
     channelID2 +
@@ -65,39 +61,25 @@ function getDataVideos() {
     yesterday +
     '&type=video&key=' +
     test10YoutubeApikey;
-  let url3 =
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
-    channelID3 +
-    '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&publishedAfter=' +
-    yesterday +
-    '&type=video&key=' +
-    test10YoutubeApikey;
-  let url4 =
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
-    channelID4 +
-    '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&publishedAfter=' +
-    yesterday +
-    '&type=video&key=' +
-    test10YoutubeApikey;
-  let url5 =
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
-    channelID5 +
-    '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&publishedAfter=' +
-    yesterday +
-    '&type=video&key=' +
-    test10YoutubeApikey;
+  // let url3 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID3  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
+  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
+  // let url4 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID4  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
+  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
+  // let url5 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID5  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
+  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
 
-  const URLS = [url, url2, url3, url4, url5];
+  const URLS = [url, url2];
   const youtubeData = URLS.map(function (URL) {
-    // return JSON.parse(UrlFetchApp.fetch(URL).getContentText()).items
     let response = UrlFetchApp.fetch(URL);
     var responseJson = JSON.parse(response.getContentText());
     const youtubeData = responseJson.items;
     return youtubeData;
   });
+
   Logger.log(youtubeData); //[[], [], data, [], data]
-  return youtubeData;
+  let youtubeDataArray = youtubeData.map((data) => data[0]); //[[{}], [{}]] => [{}, {}]
+  //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
+  const postbackData = youtubeDataArray.filter(Boolean);
+
+  return postbackData;
 }

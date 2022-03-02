@@ -10,39 +10,19 @@ const lineID = scriptProperties.getProperty('LINEID'); //LINE ID
 const postuUrl = 'https://api.line.me/v2/bot/message/push';
 const replyUrl = 'https://api.line.me/v2/bot/message/reply';
 
-//ユーザーにLINEのメッセージ送信
-function postToLine() {
-  //youtube APIで取得したデータを格納 (youtubeData =  responseJson.items)
-  // const youtubeData = getDataVideos()
-  // let youtubeData = []
-  // let youtubeData = getDataVideos().map(data =>{ data.length === 0 ?  '' : data[0]})//[{}, {}, {}, ...]
+//ユーザーにLINEのメッセージ送信（follow時）
+function postToLine(userId, youtubedata) {
+  const userLineID = userId; //ユーザーID
 
-  // [[{}], [{}], [{}], [{}]]  =>  [{}, {}, {}, {}]
-  let youtubeData = getDataVideos().map((data) => data[0]);
+  const gotYoutubeData = youtubedata; //youtubeデータ
 
-  //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
-  youtubeData = youtubeData.filter(Boolean);
-  Logger.log(youtubeData);
-
-  /////////////////////////////////////////////////////////////////
-  //データ参照場所
-  let postbackData = []; //[{}, {}, {}, ...]
-  for (let i = 0; i < youtubeData.length; i++) {
-    postbackData.push(youtubeData[i]);
-  }
-  Logger.log(postbackData.length);
-
-  // const userLineID = userId
-  // Logger.log(userLineID)
-
-  // 定時時刻処理
-  //  setTrigger();
-
+  //[{}, {}, ...] {}個数分だけLINEに送る
   const lineRoop = () => {
-    const fuga = postbackData.map((d) => linePost(d));
-    return fuga;
+    const data = gotYoutubeData.map((d) => linePost(d));
+    return data;
   };
 
+  //送る内容
   const linePost = (data) => {
     return {
       type: 'bubble',
@@ -105,7 +85,7 @@ function postToLine() {
                     text: Utilities.formatDate(
                       new Date(data.snippet.publishedAt),
                       'JST',
-                      'yyyy-MM-dd HH:mm:ss'
+                      'yyyy-MM-dd'
                     ),
                     wrap: true,
                     color: '#666666',
@@ -126,7 +106,7 @@ function postToLine() {
           {
             type: 'button',
             style: 'primary',
-            color: '#64b8fc',
+            color: '#4651aa',
             height: 'sm',
             action: {
               type: 'postback',
@@ -137,13 +117,13 @@ function postToLine() {
           },
           {
             type: 'button',
-            style: 'link',
+            style: 'primary',
+            color: '#000000',
             height: 'sm',
             action: {
-              type: 'postback',
-              label: '無視',
-              data: '無視しました',
-              displayText: ' ',
+              type: 'uri',
+              label: 'Notion',
+              uri: 'https://nasal-howler-18d.notion.site/Catch-Your-Fitness-778d71dd8c5245b3809acf740c86044a',
             },
           },
           {
@@ -156,10 +136,10 @@ function postToLine() {
   const post = lineRoop();
 
   const payload =
-    postbackData.length > 0
+    gotYoutubeData.length > 0
       ? //payload:送るデータの詳細（ユーザー画面に表示されるもの）
         {
-          to: lineID,
+          to: userLineID,
           messages: [
             {
               type: 'flex',
@@ -173,7 +153,7 @@ function postToLine() {
         }
       : //取得データが0の場合
         {
-          to: lineID,
+          to: userLineID,
           messages: [
             {
               type: 'text',
@@ -190,5 +170,5 @@ function postToLine() {
     payload: JSON.stringify(payload),
   };
 
-  UrlFetchApp.fetch(postuUrl, params);
+  UrlFetchApp.fetch(pushUrl, params);
 }

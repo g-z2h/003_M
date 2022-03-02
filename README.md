@@ -1,6 +1,11 @@
 # Catch Your Fitness
 
-<img width="995" alt="carousel" src="https://user-images.githubusercontent.com/73515602/155256564-067fe2e7-84ea-4baf-84ac-2c76aa0d58e4.png">
+- サービスの概要
+- 想定されたユーザー
+- ユーザーが持つ課題
+- 課題の解決方法（このサービスでどうやって解決するか）
+- 利用方法
+- 実装した機能についての GIF と説明
 
 **Catch Your Fitness はフィットネス系 YouTuber 最新トレーニング動画を教えてくれる LineBot です。**
 
@@ -11,7 +16,7 @@ QR code
 
 <img width="281" alt="catch your fitness" src="https://user-images.githubusercontent.com/73515602/155257109-5db88d4e-2b70-43f3-8d76-eace7b5d2f42.png">
 
-デモストレーション
+デモストレーション(要修正)
 
 ![1 5倍](https://user-images.githubusercontent.com/73515602/155871971-b69907e3-6911-4610-92cf-689d82729079.gif)
 

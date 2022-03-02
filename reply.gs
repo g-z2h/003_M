@@ -1,47 +1,28 @@
+//end point
+const replyUrl = 'https://api.line.me/v2/bot/message/reply';
+
 //返信処理
 function doPost(e) {
-  let youtubeData = getDataVideos().map((data) => data[0]);
-  //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
-  youtubeData = youtubeData.filter(Boolean);
-  let postbackData = []; //[{}, {}, {}, ...]
-  for (let i = 0; i < youtubeData.length; i++) {
-    postbackData.push(youtubeData[i]);
-  }
   // レスポンス取得
   let events = JSON.parse(e.postData.contents).events;
 
   events.forEach(function (event) {
     if (event.type == 'follow') {
-      follow(event);
-      getIdAndName(event);
+      const youtubedata = getDataVideos();
+      follow(event, youtubedata);
+      // getIdAndName(event)
     } else if (event.type == 'message') {
       reply(event);
     } else if (event.type == 'unfollow') {
+      unfollow(event);
     }
   });
 
   let reaction = events[0].postback.data;
   let replyToken = events[0].replyToken;
 
-  if (reaction == '無視しました') {
-    UrlFetchApp.fetch(replyUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token,
-      },
-      method: 'POST',
-      payload: JSON.stringify({
-        replyToken: replyToken,
-        messages: [
-          {
-            type: 'text',
-            text: '無視しました！',
-          },
-        ],
-      }),
-    });
-    return;
-  } else {
+  if (reaction) {
+    const postbackData = getDataVideos();
     if (reaction == postbackData[0].snippet.title + ' を保存しました！') {
       //Notion処理発火
       notion(postbackData[0]);

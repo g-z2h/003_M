@@ -76,24 +76,24 @@ function notion(postbackData) {
           start: Utilities.formatDate(
             new Date(postbackData.snippet.publishedAt),
             'JST',
-            'yyyy-MM-dd HH:mm:ss'
+            'yyyy-MM-dd'
           ),
           end: null,
         },
       },
-      Files: {
-        type: 'files',
-        files: [
-          {
-            name: postbackData.snippet.thumbnails.high.url,
-            type: 'external',
-            external: {
-              url: postbackData.snippet.thumbnails.high.url,
-            },
-          },
-        ],
-      },
     },
+    children: [
+      {
+        object: 'block',
+        type: 'image',
+        image: {
+          type: 'external',
+          external: {
+            url: postbackData.snippet.thumbnails.high.url,
+          },
+        },
+      },
+    ],
   };
 
   const options = {
@@ -105,75 +105,97 @@ function notion(postbackData) {
   return UrlFetchApp.fetch(urlNotion, options);
 }
 
-//ユーザー情報が保存されない（下記のコードは動かない）
 // NotionにLINEユーザー情報保存
-// function saveLineInfo(lineIdWithName) {
-//   const lineInfo = lineIdWithName
-//   const endPoint = `https://api.notion.com/v1/pages`
+function saveLineInfo(gotIdAndName) {
+  const userid = gotIdAndName[0];
+  const username = gotIdAndName[1];
 
+  const endPoint = `https://api.notion.com/v1/pages`;
+
+  const headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+    Authorization: 'Bearer ' + integrationTokenLINE,
+    'Notion-Version': '2021-08-16',
+  };
+
+  const lineData = {
+    parent: { database_id: databaseIDLINE },
+    properties: {
+      ユーザー名: {
+        title: [
+          {
+            text: {
+              content: username,
+            },
+          },
+        ],
+      },
+      ID: {
+        rich_text: [
+          {
+            text: {
+              content: userid,
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  const options = {
+    method: 'post',
+    headers: headers,
+    payload: JSON.stringify(lineData),
+  };
+  return UrlFetchApp.fetch(endPoint, options);
+}
+
+//削除の対象を特定
+// function searchPage (userid){
+//   const response = notion.search({
+//     query: userid,
+//   })
+//   const pageId = response.results[0].id
+//   deleteUserInfo (pageId)
+// }
+
+//LINE userIDに該当するデータのセットを削除（アーカイブ）
+// function deleteUserInfo (pageId) {
+//    const aaa = notion.pages.update({
+//     page_id: pageId,
+//     archived : true,
+// })
+// }
+
+// Notionのデータを取得
+// function getNotionData(userid) {
+//   const query = {
+//     filter: {
+//       property: 'ID',
+//       'ID': {
+//           "rich_text": [
+//           {
+//             'text': {
+//               'content': userid
+//             }
+//           }
+//         ]
+//       },
+//     },
+//   };
 //   const  headers = {
 //     'Content-Type' : 'application/json; charset=UTF-8',
 //     'Authorization': 'Bearer ' + integrationTokenLINE,
 //     'Notion-Version': '2021-08-16',
 //   };
 
-//     const  lineData = {
-//     'parent': {'database_id': databaseIDLINE},
-//     'properties': {
-//        'ユーザー名': {
-//           'title': [
-//           {
-//             'text': {
-//               'content': lineInfo[0]
-//             }
-//           }
-//         ]
-//       },
-//         'ID': {
-//           "rich_text": [
-//           {
-//             'text': {
-//               'content': lineInfo[1],
-//             }
-//           }
-//         ]
-//       },
-//      }
-//     }
-
-//   const  options = {
-//     "method" : "post",
-//     "headers" : headers,
-//     "payload" : JSON.stringify(lineData)
-//   };
-
-//  return UrlFetchApp.fetch(endPoint, options);
-// }
-
-// Notionのデータを取得
-// function getNotionData() {
-//   const today = new Date();
-//   const formattedToday = Utilities.formatDate(today, 'JST', 'yyyy-MM-dd');
-//   const query = {
-//     filter: {
-//       property: '日付',
-//       date: {
-//         equals: formattedToday,
-//       },
-//     },
-//   };
-//   const headers = {
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${NOTION_API_KEY}`,
-//     'Notion-Version': '2021-08-16',
-//   };
 //   const options = {
 //     method: 'POST',
 //     headers: headers,
 //     payload: JSON.stringify(query),
 //   };
 
-//   const response = UrlFetchApp.fetch(NOTION_URL, options);
+//   const response = UrlFetchApp.fetch(urlNotion, options);
 //   const json = JSON.parse(response.getContentText());
 //   const results = json.results;
 

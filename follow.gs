@@ -1,5 +1,5 @@
 //友達追加されたときの処理
-function follow(event) {
+function follow(event, youtubedata) {
   // ユーザーid, name取得`
   let userId = event.source.userId;
   let nickname = getUserProfile(userId);
@@ -25,5 +25,9 @@ function follow(event) {
   };
   UrlFetchApp.fetch(replyUrl, options);
 
-  //  postToLine(userId)
+  postToLine(userId, youtubedata);
+
+  const gotIdAndName = [userId, nickname];
+  //notionへ保存
+  saveLineInfo(gotIdAndName);
 }
