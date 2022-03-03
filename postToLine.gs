@@ -7,8 +7,7 @@ scriptProperties.setProperties({
 const token = scriptProperties.getProperty('CHTOKNE'); //LINEチャンネルトークン
 const lineID = scriptProperties.getProperty('LINEID'); //LINE ID
 //LINE endpoint
-const postuUrl = 'https://api.line.me/v2/bot/message/push';
-const replyUrl = 'https://api.line.me/v2/bot/message/reply';
+const pushUrl = 'https://api.line.me/v2/bot/message/push';
 
 //ユーザーにLINEのメッセージ送信（follow時）
 function postToLine(userId, youtubedata) {
@@ -45,7 +44,7 @@ function postToLine(userId, youtubedata) {
             type: 'text',
             text: data.snippet.title,
             weight: 'bold',
-            size: 'md',
+            size: 'sm',
           },
           {
             type: 'box',
@@ -135,6 +134,35 @@ function postToLine(userId, youtubedata) {
   };
   const post = lineRoop();
 
+  // const payload = function check () {
+  //  if(gotYoutubeData.length > 0) {
+  // //payload:送るデータの詳細（ユーザー画面に表示されるもの）
+  //  return {
+  //     to: userLineID,
+  //     messages: [
+  //       {"type": "flex",
+  //         "altText": "最新の動画が届きました！",
+  //         contents: {
+  //         type: "carousel",
+  //       "contents":post
+  //       }
+  //       }
+  //     ]
+  //   }
+  //  } else {
+  //  //取得データが0の場合
+  //  return {
+  //       to : userLineID,
+  //       "messages" : [
+  //         {
+  //           "type" : "text",
+  //           "text" : "本日の最新動画はありません！明日の最新動画の配信をお待ち下さい！"
+  //         }
+  //       ]
+  //   }
+  //  }
+  // }
+
   const payload =
     gotYoutubeData.length > 0
       ? //payload:送るデータの詳細（ユーザー画面に表示されるもの）
@@ -161,6 +189,7 @@ function postToLine(userId, youtubedata) {
             },
           ],
         };
+
   const params = {
     method: 'post',
     contentType: 'application/json',

@@ -9,9 +9,7 @@ function follow(event, youtubedata) {
     messages: [
       {
         type: 'text',
-        text:
-          nickname +
-          'さんフォローありがとうございます! 明日から毎朝7時に最新トレーニング動画を配信します！',
+        text: '☆使い方☆\n1. すぐ見たい場合は【サムネ】をクリック👀\n2. 気に入った動画があれば【保存】をクリック🏋️‍♀️ \n3. 保存した動画一覧が見るには【Notion】をクリック📚 ',
       },
     ],
   };

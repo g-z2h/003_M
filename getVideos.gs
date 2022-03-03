@@ -13,73 +13,99 @@ scriptProperties.setProperties({
   TEST9_YT_APIKEY: '**********************',
   TEST10_YT_APIKEY: '**********************',
 });
-//YouTube Info
-//API KEY
-const youtubeApikey = scriptProperties.getProperty('YT_APIKEY'); //youtube api key
-const test2YoutubeApikey = scriptProperties.getProperty('TEST2_YT_APIKEY'); //youtube api key TEST2
-const test3YoutubeApikey = scriptProperties.getProperty('TEST3_YT_APIKEY'); //youtube api key TEST3
-const test4YoutubeApikey = scriptProperties.getProperty('TEST4_YT_APIKEY'); //youtube api key TEST4
-const test5YoutubeApikey = scriptProperties.getProperty('TEST5_YT_APIKEY'); //youtube api key TEST5
-const test6YoutubeApikey = scriptProperties.getProperty('TEST6_YT_APIKEY'); //youtube api key TEST6
-const test7YoutubeApikey = scriptProperties.getProperty('TEST7_YT_APIKEY'); //youtube api key TEST7
-const test8YoutubeApikey = scriptProperties.getProperty('TEST8_YT_APIKEY'); //youtube api key TEST8
-const test9YoutubeApikey = scriptProperties.getProperty('TEST9_YT_APIKEY'); //youtube api key TEST9
-const test10YoutubeApikey = scriptProperties.getProperty('TEST10_YT_APIKEY'); //youtube api key TEST10
+function apiKeyList() {
+  return {
+    youtubeApikey: scriptProperties.getProperty('YT_APIKEY'), //youtube api key
+    test2YoutubeApikey: scriptProperties.getProperty('TEST2_YT_APIKEY'), //youtube api key TEST2
+    test3YoutubeApikey: scriptProperties.getProperty('TEST3_YT_APIKEY'), //youtube api key TEST3
+    test4YoutubeApikey: scriptProperties.getProperty('TEST4_YT_APIKEY'), //youtube api key TEST4
+    test5YoutubeApikey: scriptProperties.getProperty('TEST5_YT_APIKEY'), //youtube api key TEST5
+    test7YoutubeApikey: scriptProperties.getProperty('TEST7_YT_APIKEY'), //youtube api key TEST7
+    test10YoutubeApikey: scriptProperties.getProperty('TEST10_YT_APIKEY'), //youtube api key TEST10
+  };
+}
 
-//youtube Channel ID
-const channelID = 'UCb-YblEIoA8fdgfVhgG4tBA'; // sample1 yokokawa
-const channelID2 = 'UCdSPo9Iefw1REMBTPqm7DwQ'; // sample2 bighide
-const channelID3 = 'UCnRd_MInrP6BhdSFJVY710A'; // sample3 arm hero
-const channelID4 = 'UC7F_CLFtxDetmUnORgmwImg'; // sample4 yamamoto
-const channelID5 = 'UCo2kwWSpTUbbus7syigi0Jg'; // sample5 terashima
+function chanelId() {
+  return {
+    channelID: 'UCb-YblEIoA8fdgfVhgG4tBA', // sample1 yokokawa
+    channelID2: 'UCdSPo9Iefw1REMBTPqm7DwQ', // sample2 bighide
+    channelID3: 'UCnRd_MInrP6BhdSFJVY710A', // sample3 arm hero
+    channelID4: 'UC7F_CLFtxDetmUnORgmwImg', // sample4 yamamoto
+    channelID5: 'UCo2kwWSpTUbbus7syigi0Jg', // sample5 terashima
+  };
+}
 
-const baseUrl = 'https://www.googleapis.com/youtube/v3/';
-
-//今日の日時取得
-let date = new Date();
-let day = date.getDate();
-
-//昨日の日付を取得
-date.setDate(day - 1);
-const json = JSON.stringify(date); //ex). "2017-08-23T03:00:00.000Z"
-const yesterday = JSON.parse(json); //ex).  2017-08-23T03:00:00.000Z (RFC 3339 形式の date-time 値)
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
 //youtubeからデータ取ってくる
 function getDataVideos() {
-  let url =
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
-    channelID +
-    '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&type=video&key=' +
-    test7YoutubeApikey;
-  let url2 =
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' +
-    channelID2 +
-    '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ' +
-    '&maxResults=1&order=date&publishedAfter=' +
-    yesterday +
-    '&type=video&key=' +
-    test10YoutubeApikey;
-  // let url3 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID3  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
-  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
-  // let url4 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID4  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
-  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
-  // let url5 = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + channelID5  + '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ'+'&maxResults=1&order=date&publishedAfter=' +
-  //   yesterday +'&type=video&key=' + test2YoutubeApikey;
+  const { yesterday } = getYesterday();
+  const {
+    youtubeApikey,
+    test2YoutubeApikey,
+    test3YoutubeApikey,
+    test4YoutubeApikey,
+    test7YoutubeApikey,
+    test10YoutubeApikey,
+  } = apiKeyList();
+  const { channelID, channelID2, channelID3, channelID4, channelID5 } =
+    chanelId();
 
-  const URLS = [url, url2];
-  const youtubeData = URLS.map(function (URL) {
-    let response = UrlFetchApp.fetch(URL);
-    var responseJson = JSON.parse(response.getContentText());
-    const youtubeData = responseJson.items;
-    return youtubeData;
-  });
+  const endpoint =
+    'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=';
+  const query = '&q=肩トレ%7C胸トレ%7C背中トレ%7C脚トレ%7C腕トレ%7C筋トレ';
+  //  const other = '&maxResults=1&order=date&publishedAfter=' + yesterday //本番用
+  const other = '&maxResults=1&order=date&'; //１つ以上取得するため(開発用)
+  const key = '&type=video&key=';
 
-  Logger.log(youtubeData); //[[], [], data, [], data]
-  let youtubeDataArray = youtubeData.map((data) => data[0]); //[[{}], [{}]] => [{}, {}]
-  //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
-  const postbackData = youtubeDataArray.filter(Boolean);
+  try {
+    //url
+    const url1 = endpoint + channelID + query + other + key + youtubeApikey;
+    const url2 = endpoint + channelID2 + query + other + key + youtubeApikey;
+    const url3 =
+      endpoint + channelID3 + query + other + key + test2YoutubeApikey;
+    const url4 =
+      endpoint + channelID4 + query + other + key + test4YoutubeApikey;
+    const url5 =
+      endpoint + channelID5 + query + other + key + test4YoutubeApikey;
 
-  return postbackData;
+    const urls = [url1, url2, url3, url4, url5];
+    const youtubeData = urls.map(function (url) {
+      const response = UrlFetchApp.fetch(url);
+      const responseJson = JSON.parse(response.getContentText());
+      const youtubeData = responseJson.items;
+      return youtubeData;
+    });
+    Logger.log(youtubeData); //[[], [], data, [], data]
+    let youtubeDataArray = youtubeData.map((data) => data[0]); //[[{}], [{}]] => [{}, {}]
+    //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
+    const postbackData = youtubeDataArray.filter(Boolean);
+
+    return postbackData;
+  } catch (error) {
+    //url
+    const url1 =
+      endpoint + channelID + query + other + key + test3YoutubeApikey;
+    const url2 =
+      endpoint + channelID2 + query + other + key + test7YoutubeApikey;
+    const url3 =
+      endpoint + channelID2 + query + other + key + test7YoutubeApikey;
+    const url4 =
+      endpoint + channelID2 + query + other + key + test10YoutubeApikey;
+    const url5 =
+      endpoint + channelID2 + query + other + key + test10YoutubeApikey;
+
+    const urls = [url1, url2, url3, url4, url5];
+    const youtubeData = urls.map(function (url) {
+      const response = UrlFetchApp.fetch(url);
+      const responseJson = JSON.parse(response.getContentText());
+      const youtubeData = responseJson.items;
+      Logger.log(error);
+      return youtubeData;
+    });
+    Logger.log(youtubeData); //[[], [], data, [], data]
+    let youtubeDataArray = youtubeData.map((data) => data[0]); //[[{}], [{}]] => [{}, {}]
+    //空配列を削除 [null, null,{}, null, {} ] => [{}, {}] の形にする。
+    const postbackData = youtubeDataArray.filter(Boolean);
+
+    return postbackData;
+  }
 }
