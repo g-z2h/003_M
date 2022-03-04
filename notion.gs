@@ -7,20 +7,35 @@ scriptProperties.setProperties({
   ITOKEN_LINE: '******************',
   DATABASEID_LINE: '******************',
 });
-//Notion Info
-const integrationToken = scriptProperties.getProperty('ITOKEN'); //Notion Integration Token
-const databaseID = scriptProperties.getProperty('DATABASEID'); //DATABASE ID
-const integrationTokenLINE = scriptProperties.getProperty('ITOKEN_LINE'); //Notion Integration Token LINE
-const databaseIDLINE = scriptProperties.getProperty('DATABASEID_LINE'); //DATABASE ID LINE-INFO
-const urlNotion = 'https://api.notion.com/v1/pages'; //url notion
+//Notion Info for videos
+function notion1() {
+  return {
+    integrationToken: scriptProperties.getProperty('ITOKEN'), //Notion Integration Token
+    databaseID: scriptProperties.getProperty('DATABASEID'), //DATABASE ID
+  };
+}
+
+//Notion Info for line
+function notion2Line() {
+  return {
+    integrationTokenLINE: scriptProperties.getProperty('ITOKEN_LINE'), //Notion Integration Token LINE
+    databaseIDLINE: scriptProperties.getProperty('DATABASEID_LINE'), //DATABASE ID LINE-INFO
+  };
+}
+
+const endpoint = 'https://api.notion.com/v1/pages';
 
 // Notionにデータを保存
-function notion(postbackData) {
-  const headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
-    Authorization: 'Bearer ' + integrationToken,
-    'Notion-Version': '2021-08-16',
-  };
+function notion(postbackData, gotIdAndName) {
+  const { integrationToken, databaseID } = notion1();
+  const lineId = gotIdAndName[0];
+  const lineName = gotIdAndName[1];
+
+  //multi_select
+  const bodyParts = ['腕', '胸', '肩', '背中', '脚', '筋トレ'];
+  const multiSelect = bodyParts.map((part) => ({
+    name: postbackData.snippet.title.match(part) ? part : ' ',
+  }));
 
   const post_data = {
     parent: { database_id: databaseID },
@@ -47,29 +62,7 @@ function notion(postbackData) {
         url: 'https://www.youtube.com/watch?v=' + postbackData.id.videoId,
       },
       部位: {
-        multi_select: [
-          {
-            name: postbackData.snippet.title.match(/腕/) ? '腕' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/胸/) ? '胸' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/背中/) ? '背中' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/脚/) ? '脚' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/肩/) ? '肩' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/前腕/) ? '前腕' : ' ',
-          },
-          {
-            name: postbackData.snippet.title.match(/筋トレ/) ? '筋トレ' : ' ',
-          },
-        ],
+        multi_select: multiSelect,
       },
       投稿日: {
         date: {
@@ -80,6 +73,24 @@ function notion(postbackData) {
           ),
           end: null,
         },
+      },
+      LINEID: {
+        rich_text: [
+          {
+            text: {
+              content: lineId,
+            },
+          },
+        ],
+      },
+      ユーザー名: {
+        rich_text: [
+          {
+            text: {
+              content: lineName,
+            },
+          },
+        ],
       },
     },
     children: [
@@ -96,21 +107,27 @@ function notion(postbackData) {
     ],
   };
 
+  const headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+    Authorization: 'Bearer ' + integrationToken,
+    'Notion-Version': '2021-08-16',
+  };
+
   const options = {
     method: 'post',
     headers: headers,
     payload: JSON.stringify(post_data),
   };
 
-  return UrlFetchApp.fetch(urlNotion, options);
+  return UrlFetchApp.fetch(endpoint, options);
 }
 
 // NotionにLINEユーザー情報保存
 function saveLineInfo(gotIdAndName) {
-  const userid = gotIdAndName[0];
-  const username = gotIdAndName[1];
+  const { integrationTokenLINE, databaseIDLINE } = notion2Line();
 
-  const endPoint = `https://api.notion.com/v1/pages`;
+  const lineId = gotIdAndName[0];
+  const lineName = gotIdAndName[1];
 
   const headers = {
     'Content-Type': 'application/json; charset=UTF-8',
@@ -125,7 +142,7 @@ function saveLineInfo(gotIdAndName) {
         title: [
           {
             text: {
-              content: username,
+              content: lineName,
             },
           },
         ],
@@ -134,7 +151,7 @@ function saveLineInfo(gotIdAndName) {
         rich_text: [
           {
             text: {
-              content: userid,
+              content: lineId,
             },
           },
         ],
@@ -147,57 +164,5 @@ function saveLineInfo(gotIdAndName) {
     headers: headers,
     payload: JSON.stringify(lineData),
   };
-  return UrlFetchApp.fetch(endPoint, options);
+  return UrlFetchApp.fetch(endpoint, options);
 }
-
-//削除の対象を特定
-// function searchPage (userid){
-//   const response = notion.search({
-//     query: userid,
-//   })
-//   const pageId = response.results[0].id
-//   deleteUserInfo (pageId)
-// }
-
-//LINE userIDに該当するデータのセットを削除（アーカイブ）
-// function deleteUserInfo (pageId) {
-//    const aaa = notion.pages.update({
-//     page_id: pageId,
-//     archived : true,
-// })
-// }
-
-// Notionのデータを取得
-// function getNotionData(userid) {
-//   const query = {
-//     filter: {
-//       property: 'ID',
-//       'ID': {
-//           "rich_text": [
-//           {
-//             'text': {
-//               'content': userid
-//             }
-//           }
-//         ]
-//       },
-//     },
-//   };
-//   const  headers = {
-//     'Content-Type' : 'application/json; charset=UTF-8',
-//     'Authorization': 'Bearer ' + integrationTokenLINE,
-//     'Notion-Version': '2021-08-16',
-//   };
-
-//   const options = {
-//     method: 'POST',
-//     headers: headers,
-//     payload: JSON.stringify(query),
-//   };
-
-//   const response = UrlFetchApp.fetch(urlNotion, options);
-//   const json = JSON.parse(response.getContentText());
-//   const results = json.results;
-
-//   return results;
-// }

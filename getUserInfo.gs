@@ -8,12 +8,3 @@ function getUserProfile(userId) {
   });
   return JSON.parse(userProfile).displayName;
 }
-
-// ユーザー名、ID取得
-// function getIdAndName (event){
-//   let userId = event.source.userId;
-//   let nickname = getUserProfile(userId);
-//   const lineIdWithName = [userId, nickname]
-
-//   return lineIdWithName
-// }
