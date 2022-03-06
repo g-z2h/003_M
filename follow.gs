@@ -1,8 +1,8 @@
 //友達追加されたときの処理
 function follow(event, youtubedata) {
   // ユーザーid, name取得`
-  let userId = event.source.userId;
-  let nickname = getUserProfile(userId);
+  const userId = event.source.userId;
+  const nickname = getUserProfile(userId);
 
   let message = {
     replyToken: event.replyToken,

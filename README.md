@@ -9,7 +9,8 @@
 
 ## 想定されたユーザー
 
-個人利用が第一目的のため、まずは自分専用のアプリとして開発をしました。
+フィットネスに興味があり、YouTube で情報収集をしている方。
+（個人利用を想定していますが、順次他ユーザーも使えるように機能拡張予定）
 
 ### このアプリを作った背景
 
@@ -47,20 +48,20 @@
 
 ## 機能一覧
 
-| No  | 機能             |                     |
-| --- | ---------------- | ------------------- |
-| 1   | 動画データ取得   | YouTube Data API v3 |
-| 2   | Line 応答        | Line Messaging API  |
-| 3   | 定時通知         | Google App Script   |
-| 4   | データベース保存 | Notion API          |
+| No  | 機能             |                         |
+| --- | ---------------- | ----------------------- |
+| 1   | 動画データ取得   | YouTube Data API v3     |
+| 2   | Line 応答        | Line Messaging API v2.1 |
+| 3   | 定時通知         | Google App Script       |
+| 4   | データベース保存 | Notion API 2021-08-16   |
 
 ## 使用技術
 
 - Javascript
 - GAS（Google App Script）
-- Line Messaging API
-- YouTube Data API
-- Notion API
+- Line Messaging API v2.1
+- YouTube Data API v3
+- Notion API version 2021-08-16
 
 ## GIF
 

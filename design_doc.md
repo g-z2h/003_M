@@ -27,9 +27,9 @@
 
 - Javascript
 - GAS（Google App Script）
-- Line Messaging API
-- YouTube Data API
-- Notion API
+- Line Messaging API v2.1
+- YouTube Data API v3
+- Notion API version 2021-08-16
 
 ### 選択した理由
 
@@ -69,7 +69,6 @@
 - 開発期間の考慮と個人利用が第一目的のため、まずは自分専用のアプリとして開発を進める
 - お気に入りした際にユーザーごとに分けられていない
 - 今後他のユーザーが使えるようにしていく
-
 - Notion API はオープンベータなので仕様変更がある場合要修正
 
 ## 参考文献
@@ -90,7 +89,6 @@ https://nasal-howler-18d.notion.site/PF_References-b83878bf0011478d89acca2a91248
 - GAS トリガー設定
 - YouTube Data API で動画取得
 - LINE の反応（Yes or No）によって、Notion に保存するか
-- 見ていない動画があれば Notion のデータを取得 → LINE 通知
 
 ### 使えるように実装
 
