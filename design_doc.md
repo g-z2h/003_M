@@ -26,41 +26,39 @@
 ## 使用技術
 
 - Javascript
-- Typescript
 - GAS（Google App Script）
-- Line Messaging API
-- YouTube Data API
-- Notion API
+- Line Messaging API v2.1
+- YouTube Data API v3
+- Notion API version 2021-08-16
 
 ### 選択した理由
 
 - Javascript
-  \_\_GAS が Javascript を元に作られている
-- Typescript
+  - GAS が Javascript を元に作られている
 - GAS（Google App Script）
-  \_\_サーバーレスで実行可能な環境、Google サービスと連携しやすい（YouTube）
+  - サーバーレスで実行可能な環境、Google サービスと連携しやすい（YouTube API）
 - Line Messaging API
-  \_\_外部サービスと接続・連携したアカウントの作成・開発が可能
+  - 多くの人がすでにアプリをインストール済であり、誰もが簡単に命令を事項することができるため。
 - YouTube Data API
-  \_\_動画の情報を取得できる
+  - 必要な部分だけ動画の情報を取得できる。
 - Notion API
-  \_\_ソートしたり検索したりするのが直感的で簡単に操作できる
+  - 今後のノーコードでのサービス開発の、データーベース及び UI の先駆けになりそうだから。
+  - またデータベースはソートしたり検索したりするのが直感的で簡単に操作できる。
 
 ## 実装
 
 ### 構成＆処理フロー
 
-![maeda-PF-GAS](https://user-images.githubusercontent.com/73515602/154376707-775169d3-c39d-4af2-9f76-8adc69165942.jpeg)
+![maeda-PF-3_3修正版 drawio](https://user-images.githubusercontent.com/73515602/156562243-63e84d3a-5fb9-4bb9-bcf6-a6bb1ccb894b.png)
 
-![maeda-PF-flow2](https://user-images.githubusercontent.com/73515602/154376818-a38abf12-f485-4873-8228-747d3b2409a4.jpeg)
+![maeda-PF-flow2 drawio](https://user-images.githubusercontent.com/73515602/156562458-c6fc6fc1-8d90-492c-a3fc-8d84c3dfb45b.png)
 
 ## ユーザー体験
 
 1. LINEBOT に登録
-2. 毎朝同じ時間に、フィットネス系 YouTuber の最新のトレーニング動画 最大 10 件が LINE に来る
+2. 毎朝同じ時間に、フィットネス系 YouTuber の最新のトレーニング動画 最大 5 件が LINE に来る
 3. 動画情報（サムネイル、タイトル、チャンネル名、投稿日）を見て保存するかしないか決める
 4. Notion で保存した動画をみることができる。見たものは記録しておく
-5. 24 時間以内に見ていない動画があれば、LINE から通知を受ける
 
 ## セキュリティやプライバシーについての考察
 
@@ -68,6 +66,9 @@
 
 ## 既知でオープンな問題
 
+- 開発期間の考慮と個人利用が第一目的のため、まずは自分専用のアプリとして開発を進める
+- お気に入りした際にユーザーごとに分けられていない
+- 今後他のユーザーが使えるようにしていく
 - Notion API はオープンベータなので仕様変更がある場合要修正
 
 ## 参考文献
@@ -82,14 +83,12 @@ https://nasal-howler-18d.notion.site/PF_References-b83878bf0011478d89acca2a91248
 - LINE チャンネル作成、アクセストークン発行
 - Notion インテグレーション作成、データベース作成
 - YouTube Data API Key 作成
-- GAS ローカルでの開発環境構築
 
 ### 処理土台作成
 
 - GAS トリガー設定
 - YouTube Data API で動画取得
 - LINE の反応（Yes or No）によって、Notion に保存するか
-- 見ていない動画があれば Notion のデータを取得 → LINE 通知
 
 ### 使えるように実装
 
@@ -111,4 +110,6 @@ https://nasal-howler-18d.notion.site/PF_References-b83878bf0011478d89acca2a91248
 
 ## Doc の編集の履歴
 
-[編集日、編集者、何をしたのか、の 3 つ組を書く]
+2022/02/17 Design_doc 提出
+
+<!-- [編集日、編集者、何をしたのか、の 3 つ組を書く] -->
