@@ -13,8 +13,6 @@ function doPost(e) {
       // getIdAndName(event)
     } else if (event.type == 'message') {
       reply(event);
-    } else if (event.type == 'unfollow') {
-      unfollow(event);
     } else if (event.type == 'postback') {
       let reaction = events[0].postback.data;
       let replyToken = events[0].replyToken;

@@ -134,35 +134,6 @@ function postToLine(userId, youtubedata) {
   };
   const post = lineRoop();
 
-  // const payload = function check () {
-  //  if(gotYoutubeData.length > 0) {
-  // //payload:送るデータの詳細（ユーザー画面に表示されるもの）
-  //  return {
-  //     to: userLineID,
-  //     messages: [
-  //       {"type": "flex",
-  //         "altText": "最新の動画が届きました！",
-  //         contents: {
-  //         type: "carousel",
-  //       "contents":post
-  //       }
-  //       }
-  //     ]
-  //   }
-  //  } else {
-  //  //取得データが0の場合
-  //  return {
-  //       to : userLineID,
-  //       "messages" : [
-  //         {
-  //           "type" : "text",
-  //           "text" : "本日の最新動画はありません！明日の最新動画の配信をお待ち下さい！"
-  //         }
-  //       ]
-  //   }
-  //  }
-  // }
-
   const payload =
     gotYoutubeData.length > 0
       ? //payload:送るデータの詳細（ユーザー画面に表示されるもの）
